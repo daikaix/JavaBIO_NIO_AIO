@@ -17,20 +17,20 @@ public class Client {
         BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
+        //等待用户输入信息
+        BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
-            //等待用户输入信息
-            BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
             String input = consoleReader.readLine();
             //发送消息
             writer.write(input + "\n");
             writer.flush();
-            if (input.equals("close")){
-                break;
-            }
             //回复消息
             String msg = reader.readLine();
             if (msg != null) {
                 System.out.println(msg);
+            }
+            if (input.equals("close")){
+                break;
             }
         }
         socket.close();

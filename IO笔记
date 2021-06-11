@@ -93,6 +93,7 @@
         (2) BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
             readLine()
         写入数据，并进行读取
-    (一个简单的读取写入程序，下面需要优化的是多个线程连接)
+    (一个简单的持续读取写入程序，下面需要优化的是多个线程连接)
+    运行方式：java Client, java Server
 
 3.
