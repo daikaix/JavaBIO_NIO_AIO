@@ -1,3 +1,5 @@
+自定义需要执行target文件的位置！！！
+
 1. JavaIO概述 (之后是Netty)
 
 网络： 输入http://www.google.com:80/search?q=test&safe=strict
@@ -67,8 +69,30 @@
        创建Socket，绑定驱动程序，驱动程序获取数据，传输给Socket，Socket读取数据
 
 同步/异步 阻塞/非阻塞:
-阻塞式IO,应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回.
-非阻塞式IO,应用进程执行系统调用之后，内核返回一个错误码。应用进程可以继续执行，但是需要不断的执行系统调用来获知 I/O 是否完成，这种方式称为轮询 polling
-IO复用,使用 select 或者 poll 等待数据，并且可以等待多个套接字中的任何一个变为可读。这一过程会被阻塞，当某一个套接字可读时返回，之后再使用 recvfrom 把数据从内核复制到进程中
-信号驱动IO,异步IO
+    阻塞式IO,应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回.
+    非阻塞式IO,应用进程执行系统调用之后，内核返回一个错误码。应用进程可以继续执行，但是需要不断的执行系统调用来获知 I/O 是否完成，这种方式称为轮询 polling
+    IO复用,使用 select 或者 poll 等待数据，并且可以等待多个套接字中的任何一个变为可读。这一过程会被阻塞，当某一个套接字可读时返回，之后再使用 recvfrom 把数据从内核复制到进程中
+    信号驱动IO,异步IO
 
+2. Socket 与 ServerSocket
+    Client 浏览器：       connect  IO  close
+    Server 服务器： bind  accept   IO  close
+
+    Server:
+        端口设置：8888     定义ServerSocket,绑定端口
+        while(true) 获取Socket连接 serverSocket.accept()
+
+        socket获取输入字节流，InputStreamReader转换为字符流，BufferedReader进行缓存区的包装（以及输出）
+        (如果客户端直接关闭，可能获取的值为none)
+        (如果是BufferedWrite,需要使用flush()方式数据遗留在缓冲区)
+    Client:
+        主机IP地址和端口号：127.0.0.1 8888  定义Socket进行连接，读写IO
+
+        读取控制台信息：
+        (1) Scanner s = new Scanner(System.in)  => s.nextInt() s.nextLine()
+        (2) BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
+            readLine()
+        写入数据，并进行读取
+    (一个简单的读取写入程序，下面需要优化的是多个线程连接)
+
+3.
