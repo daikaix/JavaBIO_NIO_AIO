@@ -1,0 +1,74 @@
+1. JavaIO概述 (之后是Netty)
+
+网络： 输入http://www.google.com:80/search?q=test&safe=strict
+      1. 解析url, http是协议部分，如果收发邮件或者接受数据，就是stmp,ftp协议开头
+         www.google.com 域名/IP地址         80 端口，指定对应的进程进行服务
+         search是路径，确定访问进程具体的服务   q=xx,safe=xxx 指定服务对应的参数信息
+
+      2. DNS解析，域名是为了将信息发送到网络当中某一台特定的主机，google有非常多的服务器，不可能去记忆对应的IP地址
+         www.google.com => 转化为Google的一台服务器的IP地址
+         完整域名：www.google.com.root
+         (1) 从右向左进行解析，根据域名的层级
+             根域名：  .root
+             顶级域名：.com 企业| .edu 教育 | .org 政府
+             次级域名：.google 企业名称， .mit
+             主机名：  www
+         (2) DNS => Domain, name , System => 本质是一个分布式的数据库
+             递归查询：浏览器 -> DNS客户端 -> 根域名(不知道，向下递归） -> 顶级域名 -> 二级域名 -> 三级域名（查询之后依次返回）
+             迭代查询：浏览器 -> DNS客户端 -> 根域名(将可能的域名返回)
+                                       -> 顶级域名(将可能的域名返回)
+                                       -> 二级域名
+                                       -> 三级域名
+             (一旦查询成功，就会将查询的结果缓存到DNS服务器上面，以便以后再进行查询)
+             如何知道根域名服务器地址，全球只有十几家，内置了对应的服务器地址
+
+      3. 协议：实现数据的传输，复杂的处理，传送网页的内容，转换为电信号的0，1 （大话HTTP,以及重学网络)
+              （每一层仅依赖于下一层，减少需要考虑的问题）
+              应用层:用户应用                                          HTTP,FTP文件传输,SMTP邮件
+              传输层:端口到端口之前的连接,两个应用程序之间的数据的传输        TCP,UDP 有连接，无连接
+                    处理数据在端口和端口之间的连接
+              网络层:主机到主机的联系，还可以获取到对应的自网络的具体位置      IP
+              链路层:网卡和网卡之间的信息传输，需要网卡进行数据交换（MAC地址）
+                     广播给MAC地址对应的所有网卡                          Ethernet 以太网协议
+              实体层:真实机器网络间的物理连接                             电信号
+
+         数据的样式：
+              链路层：帧(1518个字节)   Ethernet标头，Ethernet数据
+              网络层：IP地址          Ethernet标头，IP标头，IP数据
+              传输层：TCP/UTP协议     Ethernet标头，IP标头，TCP/UDP标头，TCP/UDP数据
+              应用层：                                               应用头，应用层数据
+
+进程间通信：
+    1. 浏览器发送请求给服务器，服务器返回数据给浏览器
+               输入流（文件，对象）                 输出流
+       数据源 ————————————————————> 应用   应用 ———————————> 数据源
+
+    2. IO流： 字符流(Reader,Writer)   （JavaIO文件读写）
+            CharArrayReader,StringReader
+            BufferedReader 提供缓存区,FilterReader 更加灵活的操作
+            InputStreamReader => FileReader  把字节流转换为字符流 (额外传入一个Reader)
+
+            字节流(InputStream, OutputStream)
+            ByteArrayInputStream, FileInputStream
+            FilterInputStream,OutputStream => BufferedInputStream,DataInputStream
+
+       装饰器模式： BufferedInputStream => FileInputStream
+                在原有类的基础上，添加装饰，增加功能，实现更高的功能， 但基本属性不会改变。
+
+       Socket: ip(a):port(a)    唯一对应的网络进程,进行通信   ip(b):port(b)
+
+       Unix中的Socket: 一切且文件, 文件描述符表 是已打开文件的索引，
+       每个进程都会维护一个文件描述符表，（不同的文件描述符对应的确是同一个文件Socket) 对应内核中的总的描述符表
+
+       如何通过Socket发送数据：
+       应用进程创建一个Socket（对应IP地址和端口），将Socket绑定到驱动程序之中
+       应用程序将数据传输给Socket（一般都是HTTP协议），Socket将数据传输给驱动程序
+       接收数据：
+       创建Socket，绑定驱动程序，驱动程序获取数据，传输给Socket，Socket读取数据
+
+同步/异步 阻塞/非阻塞:
+阻塞式IO,应用进程被阻塞，直到数据从内核缓冲区复制到应用进程缓冲区中才返回.
+非阻塞式IO,应用进程执行系统调用之后，内核返回一个错误码。应用进程可以继续执行，但是需要不断的执行系统调用来获知 I/O 是否完成，这种方式称为轮询 polling
+IO复用,使用 select 或者 poll 等待数据，并且可以等待多个套接字中的任何一个变为可读。这一过程会被阻塞，当某一个套接字可读时返回，之后再使用 recvfrom 把数据从内核复制到进程中
+信号驱动IO,异步IO
+
