@@ -21,6 +21,9 @@ Swing AWT，界面不美观，需要jre环境
            2. 设置弹出地点，setLocation  设置大小固定，setResizable(false)
            3. 自定义MyFrame, 然后可以直接获取需要的Frame
            4. 设置布局方式：setLayout()
+           5. 重写paint()：
+                g.setColor => 用完还原到最初的颜色
+                g.fillOval
 
        Panel()  [ Panel 是一个空间，但不能单独存在 ]
                 => setBounds,setBackground
