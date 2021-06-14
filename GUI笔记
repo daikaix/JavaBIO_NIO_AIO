@@ -42,6 +42,8 @@ Swing AWT，界面不美观，需要jre环境
            textField.setEchoChar('*'); 设置替换符号
            t.setText(""); 清空输入框
 
+
+
     4. 布局管理器  自动布局：.pack()
         流式布局：new FlowLayout(FlowLayout.CENTER) [ LEFT,RIGHT ]
         5分布局：frame.add(button1,BorderLayout.EAST);
