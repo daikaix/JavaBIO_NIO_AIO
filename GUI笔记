@@ -20,9 +20,20 @@ Swing AWT，界面不美观，需要jre环境
            1. setVisible,setSize,setBackground
            2. 设置弹出地点，setLocation  设置大小固定，setResizable(false)
            3. 自定义MyFrame, 然后可以直接获取需要的Frame
-           4. 设置布局方式：setLayout
+           4. 设置布局方式：setLayout()
 
        Panel()  [ Panel 是一个空间，但不能单独存在 ]
                 => setBounds,setBackground
+
+    3. 监听事件
+        1. .addWindowListener
+           适配器模式，new windowListener => new WindowAdapter (不能是windowListener，会重写所有方法)
+
+    4. 布局管理器  自动布局：.pack()
+        流式布局：new FlowLayout(FlowLayout.CENTER) [ LEFT,RIGHT ]
+        5分布局：frame.add(button1,BorderLayout.EAST);
+        栅格布局：frame.setLayout(new GridLayout(3,2)); 一共分为6个格子
+
+
 
 3. Swing

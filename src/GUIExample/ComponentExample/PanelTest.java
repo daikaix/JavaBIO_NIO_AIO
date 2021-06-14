@@ -1,6 +1,8 @@
 package GUIExample.ComponentExample;
 
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 // Panel 是一个空间，但不能单独存在
 public class PanelTest {
@@ -18,5 +20,13 @@ public class PanelTest {
 
         frame.add(panel);
         frame.setVisible(true);
+
+        // 适配器模式，new windowListener => new WindowAdapter
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
     }
 }
