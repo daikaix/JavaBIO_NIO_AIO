@@ -96,4 +96,18 @@
     (一个简单的持续读取写入程序，下面需要优化的是多个线程连接)
     运行方式：java Client, java Server
 
-3.
+3. BIO的模型
+    Acceptor(ServerSocket) 用来接受请求，在处理过程中无法接受其他Client的请求
+
+    解决方案：应用多线程，Acceptor对应多个Handler
+    Client1  =>  Handler1(ServerSocket.accept())
+    Client2  =>  Handler2
+    Client3  =>  Handler3
+
+实例： 多人聊天室，支持多个用户
+    (1) 服务器端: 一个线程acceptor, 一个线程handler(为每一个连接的用户创建一个线程)
+        客户端: 一个线程处理等待客户输入，一条线程接受服务器端的数据
+    (2)
+
+
+
