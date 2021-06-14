@@ -26,9 +26,21 @@ Swing AWT，界面不美观，需要jre环境
                 => setBounds,setBackground
 
     3. 监听事件
-        1. .addWindowListener
+        1. frame.addWindowListener
            适配器模式，new windowListener => new WindowAdapter (不能是windowListener，会重写所有方法)
            退出的函数：System.exit(0);
+           由于必须使用，直接写成一个类方法
+
+        2. button.addActionListener()
+           重写actionPerformed(ActionEvent e) 该方法 => lambda: (e)->{}
+           button.setActionCommand()
+           可以从event中getActionCommand() 实现一个方法对不同button不同效果
+
+        3. textField.addActionListener 通过enter键点击
+           TextField t = (TextField)e.getSource();
+           t.getText(); 获取输入的数据
+           textField.setEchoChar('*'); 设置替换符号
+           t.setText(""); 清空输入框
 
     4. 布局管理器  自动布局：.pack()
         流式布局：new FlowLayout(FlowLayout.CENTER) [ LEFT,RIGHT ]
