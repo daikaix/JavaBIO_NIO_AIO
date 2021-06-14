@@ -28,6 +28,7 @@ Swing AWT，界面不美观，需要jre环境
     3. 监听事件
         1. .addWindowListener
            适配器模式，new windowListener => new WindowAdapter (不能是windowListener，会重写所有方法)
+           退出的函数：System.exit(0);
 
     4. 布局管理器  自动布局：.pack()
         流式布局：new FlowLayout(FlowLayout.CENTER) [ LEFT,RIGHT ]
