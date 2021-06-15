@@ -57,14 +57,29 @@ Swing AWT，界面不美观，需要jre环境
               e.getKeyCode() 获取键码
               KeyEvent.VK_UP 上键
 
-        6.
-
-
     4. 布局管理器  自动布局：.pack()
         流式布局：new FlowLayout(FlowLayout.CENTER) [ LEFT,RIGHT ]
         5分布局：frame.add(button1,BorderLayout.EAST);
         栅格布局：frame.setLayout(new GridLayout(3,2)); 一共分为6个格子
 
-
-
 3. Swing
+    1. JFrame
+        首先 => setBounds, setVisible,
+        关闭事件 => frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
+
+        获取对应container => Container container = getContentPane();
+        为容器添加布局 => container.setLayout();
+
+        背景颜色改变：container.setBackground(Color.green);
+        添加标签：container.add(new JLabel());
+        设置居中：label.setHorizontalAlignment(SwingConstants.CENTER);
+
+        添加图标：
+
+        为控件添加事件: xxx.addXXXListener()
+
+    2. JDialog
+        1. JDialog 与 JFrame 类似, 但需要对Frame进行绑定
+           super(frame,"第一个JDialog窗体",true);
+        2. 弹窗不需要关闭事件
+        3. 调用 => new MyDialog()
