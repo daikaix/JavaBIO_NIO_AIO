@@ -30,10 +30,12 @@ Swing AWT，界面不美观，需要jre环境
                 => setBounds,setBackground
 
     3. 监听事件
-        1. frame.addWindowListener
+        1. 窗口监听 => frame.addWindowListener
            适配器模式，new windowListener => new WindowAdapter (不能是windowListener，会重写所有方法)
-           退出的函数：System.exit(0);
+           退出的函数：System.exit(0);  f.setVisible()
            由于必须使用，直接写成一个类方法
+           windowClosing
+           window激活
 
         2. button.addActionListener()
            重写actionPerformed(ActionEvent e) 该方法 => lambda: (e)->{}
@@ -49,9 +51,11 @@ Swing AWT，界面不美观，需要jre环境
         4. 鼠标监听：想要实现鼠标画画（针对窗口的鼠标监听器）this.addMouseListener
            1. 重写 MouseAdapter() 方法 => mousePressed 鼠标按压方法
            2. 鼠标事件：event.getX() .getY()  => 把鼠标位置存储到集合之中
-           3.
 
         5. 键盘监听
+           1. addKeyListener => keyPressed键盘按压方法
+              e.getKeyCode() 获取键码
+              KeyEvent.VK_UP 上键
 
         6.
 
