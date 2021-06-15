@@ -45,7 +45,6 @@ Swing AWT，界面不美观，需要jre环境
         3. textField.addActionListener 通过enter键点击
            TextField t = (TextField)e.getSource();
            t.getText(); 获取输入的数据
-           textField.setEchoChar('*'); 设置替换符号
            t.setText(""); 清空输入框
 
         4. 鼠标监听：想要实现鼠标画画（针对窗口的鼠标监听器）this.addMouseListener
@@ -61,6 +60,7 @@ Swing AWT，界面不美观，需要jre环境
         流式布局：new FlowLayout(FlowLayout.CENTER) [ LEFT,RIGHT ]
         5分布局：frame.add(button1,BorderLayout.EAST);
         栅格布局：frame.setLayout(new GridLayout(3,2)); 一共分为6个格子 设置grid = xx 间距
+        绝对布局：frame.setLayout(null); xxx.setbounds(x,x,x,x);
 
 3. Swing
     1. JFrame
@@ -97,8 +97,15 @@ Swing AWT，界面不美观，需要jre环境
        图片按钮 => 通过获取Icon, button.setIcon, setToolTipText()
        单选框 => JRadioButton => ButtonGroup group => add进去
        多选框 => JCheckBox
+                获取值 => 直接遍历Component，获取是否isSelected()
 
+       下拉 => 事件获取信息，e.getSource()  => box.getSelectedIndex(), getSelectedItem()
+       列表 => JList jList = new JList(contents); contents为列表
+              JList list = (JList)e.getSource();
 
+       文本框,密码框,文本域
+             => textField.setEchoChar('*'); 设置替换符号
+                JPasswordField,JTextField
 
 
     4. 使用伸缩条：JScrollPane pane = new JScrollPane(jTextArea);
