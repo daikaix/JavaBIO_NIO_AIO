@@ -28,7 +28,6 @@ public class MyMouthAction extends Frame {
                 // 点击触发paint事件
                 Point point = new Point(e.getX(),e.getY());
                 points.add(point);
-
                 //点击鼠标重画一遍
                 f.repaint();
             }

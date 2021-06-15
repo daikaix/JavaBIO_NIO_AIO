@@ -31,6 +31,5 @@ public class MyPaint extends Frame {
         g.setColor(Color.green);
         g.fillRect(150,200,200,200);
 
-
     }
 }

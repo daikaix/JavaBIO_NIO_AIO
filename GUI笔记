@@ -78,6 +78,8 @@ Swing AWT，界面不美观，需要jre环境
            获取方式：MyImageIcon.class.getResource("0.jpg") => new ImageIcon(url)
            添加到Label：label.setIcon(imageIcon)
 
+        图片按钮：通过获取Icon, button.setIcon, setToolTipText()
+
         为控件添加事件: xxx.addXXXListener()
 
         无需使用：
@@ -92,7 +94,11 @@ Swing AWT，界面不美观，需要jre环境
 
     3. JPanel 与 Panel一致：new JPanel(new GridLayout(1,3))
        JTextArea => textField  => setText();
-       图片按钮 =>
+       图片按钮 => 通过获取Icon, button.setIcon, setToolTipText()
+       单选框 => JRadioButton => ButtonGroup group => add进去
+       多选框 => JCheckBox
+
+
 
 
     4. 使用伸缩条：JScrollPane pane = new JScrollPane(jTextArea);
