@@ -60,7 +60,7 @@ Swing AWT，界面不美观，需要jre环境
     4. 布局管理器  自动布局：.pack()
         流式布局：new FlowLayout(FlowLayout.CENTER) [ LEFT,RIGHT ]
         5分布局：frame.add(button1,BorderLayout.EAST);
-        栅格布局：frame.setLayout(new GridLayout(3,2)); 一共分为6个格子
+        栅格布局：frame.setLayout(new GridLayout(3,2)); 一共分为6个格子 设置grid = xx 间距
 
 3. Swing
     1. JFrame
@@ -89,3 +89,11 @@ Swing AWT，界面不美观，需要jre环境
            super(frame,"第一个JDialog窗体",true);
         2. 弹窗不需要关闭事件
         3. 调用 => new MyDialog()
+
+    3. JPanel 与 Panel一致：new JPanel(new GridLayout(1,3))
+       JTextArea => textField  => setText();
+       图片按钮 =>
+
+
+    4. 使用伸缩条：JScrollPane pane = new JScrollPane(jTextArea);
+                 container.add(pane);
