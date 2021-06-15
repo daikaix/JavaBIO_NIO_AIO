@@ -17,6 +17,5 @@ public class MyJFrame extends JFrame{
         Container container = getContentPane();
         container.setBackground(Color.green);
 
-
     }
 }
