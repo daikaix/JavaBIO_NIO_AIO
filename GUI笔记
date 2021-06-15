@@ -23,7 +23,8 @@ Swing AWT，界面不美观，需要jre环境
            4. 设置布局方式：setLayout()
            5. 重写paint()：
                 g.setColor => 用完还原到最初的颜色
-                g.fillOval
+                g.fillOval => 画点，x,y,w,h
+              Frame重画界面： f.repaint()
 
        Panel()  [ Panel 是一个空间，但不能单独存在 ]
                 => setBounds,setBackground
@@ -45,6 +46,14 @@ Swing AWT，界面不美观，需要jre环境
            textField.setEchoChar('*'); 设置替换符号
            t.setText(""); 清空输入框
 
+        4. 鼠标监听：想要实现鼠标画画（针对窗口的鼠标监听器）this.addMouseListener
+           1. 重写 MouseAdapter() 方法 => mousePressed 鼠标按压方法
+           2. 鼠标事件：event.getX() .getY()  => 把鼠标位置存储到集合之中
+           3.
+
+        5. 键盘监听
+
+        6.
 
 
     4. 布局管理器  自动布局：.pack()
