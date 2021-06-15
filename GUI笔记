@@ -74,10 +74,15 @@ Swing AWT，界面不美观，需要jre环境
         添加标签：container.add(new JLabel());
         设置居中：label.setHorizontalAlignment(SwingConstants.CENTER);
 
-        添加图标：实现Icon接口, 传入width,height参数，重写方法
-                声明图标, new JLabel("icontest",myIcon,SwingConstants.CENTER)
+        最常使用图片图标：URL = file:/Users/daikaixuan/MyCode/JavaBIO_NIO_AIO/target/production/JavaBIO_NIO_AIO/GUIExample/SwingExample/0.jpg
+           获取方式：MyImageIcon.class.getResource("0.jpg") => new ImageIcon(url)
+           添加到Label：label.setIcon(imageIcon)
 
         为控件添加事件: xxx.addXXXListener()
+
+        无需使用：
+        添加图标 => 实现Icon接口, 传入width,height参数，重写方法
+                  声明图标, new JLabel("icontest",myIcon,SwingConstants.CENTER)
 
     2. JDialog
         1. JDialog 与 JFrame 类似, 但需要对Frame进行绑定
