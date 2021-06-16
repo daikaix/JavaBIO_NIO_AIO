@@ -64,7 +64,7 @@ Swing AWT，界面不美观，需要jre环境
 
 3. Swing
     1. JFrame
-        首先 => setBounds, setVisible,
+        首先 => setBounds
         关闭事件 => frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
 
         获取对应container => Container container = getContentPane();
@@ -85,6 +85,7 @@ Swing AWT，界面不美观，需要jre环境
         无需使用：
         添加图标 => 实现Icon接口, 传入width,height参数，重写方法
                   声明图标, new JLabel("icontest",myIcon,SwingConstants.CENTER)
+        最后设置可见性： setVisible
 
     2. JDialog
         1. JDialog 与 JFrame 类似, 但需要对Frame进行绑定
@@ -101,7 +102,7 @@ Swing AWT，界面不美观，需要jre环境
 
        下拉 => 事件获取信息，e.getSource()  => box.getSelectedIndex(), getSelectedItem()
        列表 => JList jList = new JList(contents); contents为列表
-              JList list = (JList)e.getSource();
+
 
        文本框,密码框,文本域
              => textField.setEchoChar('*'); 设置替换符号

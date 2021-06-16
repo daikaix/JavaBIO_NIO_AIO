@@ -1,4 +1,43 @@
 已有项目：
 1. 计算器 calculateExample, 基础画图 MyMouthAction
 2. 贪吃蛇
+    帧的概念：时间片足够小，就是动画，一秒30帧，60帧
+    键盘监听
+    定时器 Timer
+
+    1. setBounds 计算边框， setResizable(false)
+    2. 通过data将图片转化为ImageIcon
+    3. 重置图片的大小
+        image.setImage(image.getImage().getScaledInstance(width, height,Image.SCALE_DEFAULT ));//可以用下面三句代码来代替
+        //Image img = image.getImage();
+        //img = img.getScaledInstance(width, height, Image.SCALE_DEFAULT);
+        //image.setImage(img);
+    4. 绘制游戏的静态界面
+    5. 绘制静态的小蛇和字体
+    6. 让蛇动起来, 首先获取焦点事件，
+       然后添加监听事件，空格让它进行操作
+    7. 实现定时器 实现ActionListener，定义Timer,设置1s10次运行.  timer.start()
+       事件：身体的最后一节 = 身体的前一节，头可以向上，下，左，右。
+       转向：监听键盘事件，根据事件画头，移动头部
+       边界判定：if(x > 850  y < 400  )  如何重置：init() isStart=false
+
+
+    8. 食物坐标设置：foodx,foody  (定义数据)
+       画食物：Data.get().paintIcon(xxx,xxx,x,y)
+       监听吃到食物的判断：length+1 , 后面不需要操作
+
+    9. 失败判定： isFail
+       画出Fail标识：if(isFail) xx;
+       监听失败键盘事件：失败就init()
+       定时器监听事件：运行条件更改，同时判断失败条件
+
+    10. 积分系统：定义积分Score, 初始化为0
+        画出Score分数:
+        吃到东西分数加十
+
+    11. 优化：等级level => level越高，速度越快
+             不同食物，特殊食物 => 有毒的食物，暴增的食物
+             鼠标控制方法
+             数据库存盘
+
 3. 简易多人聊天 (BIO,NIO,AIO)
