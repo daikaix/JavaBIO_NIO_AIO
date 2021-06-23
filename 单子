@@ -12,8 +12,8 @@
         //Image img = image.getImage();
         //img = img.getScaledInstance(width, height, Image.SCALE_DEFAULT);
         //image.setImage(img);
-    4. 绘制游戏的静态界面
-    5. 绘制静态的小蛇和字体
+    4. 绘制游戏的静态界面  =>  继承Paint方法
+    5. 绘制静态的小蛇和字体  =>  Icon.paintIcon()
     6. 让蛇动起来, 首先获取焦点事件，
        然后添加监听事件，空格让它进行操作
     7. 实现定时器 实现ActionListener，定义Timer,设置1s10次运行.  timer.start()
@@ -40,4 +40,16 @@
              鼠标控制方法
              数据库存盘
 
-3. 简易多人聊天 (BIO,NIO,AIO)
+3. 简易多人聊天 => 基于BIO模型，支持多人同时在线，每个用户的发言转发给其他在线用户
+    模型：
+        Client1 -------- Acceptor -------- Handler1
+        Client2                            Handler2
+          ...                                 ...
+
+    Acceptor => ServerSocket
+                     => 创建线程 ChatHandler  转发接受的信息
+
+    Client => Socket =>
+                 => 创建线程 UserInputHandler 接受用户输入，向ChatHandler发送信息
+
+    
