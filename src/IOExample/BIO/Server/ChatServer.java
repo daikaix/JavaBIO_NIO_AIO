@@ -1,13 +1,9 @@
 package IOExample.BIO.Server;
 
-import IOExample.Socket.Server;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ChatServer {
@@ -60,7 +56,7 @@ public class ChatServer {
         return false;
     }
 
-    public void close(){
+    public synchronized void close(){
         if (serverSocket!=null){
             try {
                 serverSocket.close();

@@ -27,7 +27,7 @@ public class ChatHandler implements Runnable{
 
             String msg = null;
             while ((msg = reader.readLine()) != null){
-                String fwdMsg = "客户端["+socket.getPort()+"]:"+msg;
+                String fwdMsg = "客户端["+socket.getPort()+"]:"+msg+"\n";
                 System.out.println(fwdMsg);
                 server.forwardMessage(socket,fwdMsg);
 

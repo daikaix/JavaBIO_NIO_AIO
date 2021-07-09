@@ -141,3 +141,19 @@
                    readyToQuit => removeClient()
 
     注意：线程安全性的更改，synchronized
+
+    ChatClient: 处理用户输入，显示信息的功能
+        reader,writer, Host,Port
+        send() 发送消息功能
+        receive() 接受消息功能
+
+        主体：获取socket对应输入输出流，获取服务器消息并显示
+             将获取用户输入作为线程存放
+
+    UserInputHandler:
+        封装System.in, 获取输入信息，如果为QUIT，则退出
+
+运行方法：javac编译所有程序 javac server/*.java
+        java运行程序(注意与包名一致) java IOExample/BIO/Server/ChatServer
+                                 java IOExample/BIO/Client/ChatClient
+        debug:消息一定要加\n， 否则readline接收不到
