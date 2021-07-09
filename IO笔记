@@ -157,3 +157,6 @@
         java运行程序(注意与包名一致) java IOExample/BIO/Server/ChatServer
                                  java IOExample/BIO/Client/ChatClient
         debug:消息一定要加\n， 否则readline接收不到
+
+改进：线程池修改，将Handler线程通过线程池进行限制
+     executorService Executors.newFixedThreadPool(); .execute()
