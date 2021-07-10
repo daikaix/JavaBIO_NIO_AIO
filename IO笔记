@@ -160,3 +160,40 @@
 
 改进：线程池修改，将Handler线程通过线程池进行限制
      executorService Executors.newFixedThreadPool(); .execute()
+
+==4==
+前言：
+    BIO由于是阻塞的一个线程，当用户一直未输入时，线程一直在等待，浪费资源。
+    FileInputStream是通过一个一个字节来进行读取,OutputStream一个字节进行写入
+    BufferedInputStream 需要定义缓冲区，读取缓冲区大小的数据，写入时使用读取的字节数量result
+        (BufferedReader,需要通过InputStreamReader进行字节与字符流的转换)
+
+    统一关闭的方式： Closeable接口进行关闭
+    运行时间测试：System.currentTimeMillis()
+    测试结果：小文件，时间相差不大，但是第一种特别慢。中等文件，相差不大， 大文件，BufferedInputStream稍微慢一点(原因，Java对流的优化)
+NIO:
+    1. Channel 代替 Stream(流，阻塞式的)
+        Channel  <--------->  Buffer
+           |
+        Channel  <--------->  Buffer
+
+        Buffer是一个缓冲区,写入和读取需要这几个指针进行操作，read,write [ ByteBuffer，IntBuffer ]
+        写入读取模式更改为flip(),完全读取为read(),指针归位为clear(),未读取的数据compact()
+
+        Channel => FileChannel,ServerSocketChannel,SocketChannel
+        获取：new FileInputStream(source).getChannel();
+             ByteBuffer = xx; => fin.read(buffer) .write(buffer)
+        通道直接传递：fin.transferTo(0,fin.size(),fout)  不能保证完全读取
+
+    position ->     ---
+                    ---
+                    ---
+                    ---
+    limit ->        ---
+    capacity ->     ---
+
+
+
+    2. Selector 监控多条Channel
+    3. 在一个线程中处理多个Channel I/O，可以分配多个资源
+
