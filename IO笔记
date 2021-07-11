@@ -170,7 +170,8 @@
 
     统一关闭的方式： Closeable接口进行关闭
     运行时间测试：System.currentTimeMillis()
-    测试结果：小文件，时间相差不大，但是第一种特别慢。中等文件，相差不大， 大文件，BufferedInputStream稍微慢一点(原因，Java对流的优化)
+    测试结果：小文件，时间相差不大，但是第一种特别慢。中等文件，nioBuffer比较慢，而Buffer与Transfer相似，
+            大文件，BufferedStream稍微慢一点(原因，Java对流的优化)
 NIO:
     1. Channel 代替 Stream(流，阻塞式的)
         Channel  <--------->  Buffer
@@ -178,12 +179,17 @@ NIO:
         Channel  <--------->  Buffer
 
         Buffer是一个缓冲区,写入和读取需要这几个指针进行操作，read,write [ ByteBuffer，IntBuffer ]
-        写入读取模式更改为flip(),完全读取为read(),指针归位为clear(),未读取的数据compact()
+        写入读取模式更改为flip(),指针归位为clear(),未读取的数据compact()
 
         Channel => FileChannel,ServerSocketChannel,SocketChannel
-        获取：new FileInputStream(source).getChannel();
-             ByteBuffer = xx; => fin.read(buffer) .write(buffer)
-        通道直接传递：fin.transferTo(0,fin.size(),fout)  不能保证完全读取
+        获取文件通道：new FileInputStream(source).getChannel();
+
+        信息传递：
+            读写数据操作：ByteBuffer = xx; => fin.read(buffer) .write(buffer)
+                       结合缓冲区，flip,clear
+                       由于不能保证一次全部读取和写入，需要加入while( >0)
+            通道直接传递：fin.transferTo(0,fin.size(),fout)  不能保证完全读取
+
 
     position ->     ---
                     ---
@@ -193,7 +199,49 @@ NIO:
     capacity ->     ---
 
 
-
     2. Selector 监控多条Channel
+                    注册
+        Selector  -------- Channel ( SelectionKey )
+        操作：interestOps() 查看对应特殊状态的Channel
+             readyOps() 准备好的可操作状态
+             selector() 返回对应的Selector
+             attachment() 加载在Channel上的对象
+
+             select() 可以操作的对象数量
+             selectedKeys() 获取可操作性的SelectionKey
+             wakeup() 通知selector重新查看各个通道状态
+             keys() 所有绑定的Channel对应的Key
+
+             key.channel() 返回SelectionKey对应的Channel
+             key.cancel() 不再监视该channel对应的时间
+             key.isVaild() 查看是否仍绑定事件
+
+
+        Channel的状态变化： CONNECT, ACCEPT, READ, WRITE
+
+
     3. 在一个线程中处理多个Channel I/O，可以分配多个资源
 
+NIO多人聊天室实例：
+    Client1(READ)  ------>  Selector (ServerSocketChannel ==> ACCEPT) ---- handles( ACCEPT就接受并绑定，READ就读取数据并转发 ）
+    Client2(READ)
+
+    ChatServer => ServerSocketChannel, Selector, ByteBuffer(r,w)  自定义Port,指定Server端口
+        start(): 1. 创建channel并设置为非阻塞， ServerSocketChannel.open(); server.configureBlocking()
+                 2. server.socket.bind 监听对应的端口，注意是Socket进行监听，不是Channel绑定
+                 3. 创建selector并将Channel绑定ACCEPT事件，Selector.open(); server.register(s,OP_ACCEPT)
+                 4. 轮询并获取SelectedKeys,对应处理被触发的时间 selector.select(); selector.selectedKeys(); handle();
+                 5. 清空selectionKeys,关闭selector,一并关闭上面的Channel (Closeable接口)
+        handles(): 1. 判断ACCEPT事件, if(key.isAcceptable())
+                      获取接受的Channel, SocketChannel client = [key.channel() => server.accept()]
+                      设置非阻塞，并绑定到Selector上 client.configureBlocking(false) client.register(selector,OP_READ)
+                   2. 判断READ事件(接收客户端消息并转发) if(key.isReadable())
+                      获取客户端信息，receive()函数
+                      信息为空，异常 => 不再关注该channel,并提示selector
+                      消息非空，转发并检测退出 => 退出方式与异常的退出方式一致，key.cancel(),selector.wakeup()
+                                              forwardMessage()转发消息
+
+        receive(): client读取放入rBuffer，通过charset进行decode解码
+        forwardMessage(): 转发消息，首先获取所有key，将ServerSocket以及本身过滤
+                          wBuffer.put放入将字符串编码字节数据 charset.encode( xxx+fwdMsg )
+                          通过通道写入数据 channel.write(xx)
