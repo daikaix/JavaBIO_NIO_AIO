@@ -106,9 +106,9 @@
 
 实例： 多人聊天室，支持多个用户
     模型：
-            Client1 -------- Acceptor -------- Handler1
-            Client2                            Handler2
-              ...                                 ...
+            Client1(UserInputHandler) -------- Acceptor -------- Handler1 [ FixedThreadPool ]
+            Client2                                              Handler2
+              ...                                                   ...
 
         Acceptor => ServerSocket
                          => 创建线程 ChatHandler  转发接受的信息
@@ -179,7 +179,9 @@ NIO:
         Channel  <--------->  Buffer
 
         Buffer是一个缓冲区,写入和读取需要这几个指针进行操作，read,write [ ByteBuffer，IntBuffer ]
-        写入读取模式更改为flip(),指针归位为clear(),未读取的数据compact()
+        flip() position归0, limit在position原位置, capacity不变
+        写入读取模式更改为flip(),读Buffer之后要flip才能获取对应字符,写完Buffer后要flip()才能读
+        指针归位为clear(),未读取的数据compact()
 
         Channel => FileChannel,ServerSocketChannel,SocketChannel
         获取文件通道：new FileInputStream(source).getChannel();
@@ -218,11 +220,14 @@ NIO:
 
 
         Channel的状态变化： CONNECT, ACCEPT, READ, WRITE
-
+             key.isConnectable()
 
     3. 在一个线程中处理多个Channel I/O，可以分配多个资源
 
 NIO多人聊天室实例：
+client:
+
+server:
     Client1(READ)  ------>  Selector (ServerSocketChannel ==> ACCEPT) ---- handles( ACCEPT就接受并绑定，READ就读取数据并转发 ）
     Client2(READ)
 
@@ -245,3 +250,27 @@ NIO多人聊天室实例：
         forwardMessage(): 转发消息，首先获取所有key，将ServerSocket以及本身过滤
                           wBuffer.put放入将字符串编码字节数据 charset.encode( xxx+fwdMsg )
                           通过通道写入数据 channel.write(xx)
+
+    注意：private Charset charset = Charset.forName("UTF-8"); 专门用来进行字节数据和字符串之间的转换
+         只有绑定端口要用到socket
+         bug:读不出来，注意，一定要flip()读写转换，
+
+    模型： Selector => SocketChannel[connect] 连接事件 =》 new Thread(new UserInputHandler()).start()
+                      SocketChannel[read] 读取事件
+
+    ChatClient: rwBuffer,port,host,SocketChannel,Selector [ 构造函数，readyToQuit,close ]
+        start(): 读取消息，获取用户输入发给客户端
+                1. SocketChannel注册connect事件，连接对应的ServerSocket, 并不断调用select()触发handles事件
+                2. handles():
+                    2.1: connected连接事件，key.isConnectable(),
+                         client.connect [ server.accept ]
+                         client.isConnectionPending()连接是否就绪，就绪就finishConnect()
+                         由于用户输入一定是阻塞的，所以需要新建线程 new Thread(new UserInputHandler(this)).start()
+                         client注册READ事件
+                    2.2: read事件
+                         通过channel读取数据，rBuffer.read, charset.decode()
+                         判断传入数据，如果异常则关闭
+    UserInputHandler: 1. 获取System.in对应的BufferedReader，并获取输入数据
+                      2. send():
+                        2.1 msg为空直接返回
+                        2.2 wBuffer, client.write, quit退出

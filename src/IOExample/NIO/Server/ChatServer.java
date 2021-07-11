@@ -83,7 +83,7 @@ public class ChatServer {
 
     public String receive(SocketChannel client) throws IOException {
         rBuffer.clear();
-        while((client.read(rBuffer))>0);
+        while(client.read(rBuffer)>0);
         rBuffer.flip();
         return String.valueOf(charset.decode(rBuffer));
     }
@@ -136,7 +136,7 @@ public class ChatServer {
     }
 
     public static void main(String[] args) {
-        ChatServer server = new ChatServer(7777);
+        ChatServer server = new ChatServer();
         server.start();
     }
 }
