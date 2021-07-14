@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 public class Client {
 
@@ -28,7 +29,38 @@ public class Client {
     }
 
     public void start() {
+        try {
+            //创建channel
+            clientChannel = AsynchronousSocketChannel.open();
+            //异步调用返回Future对象
+            Future<Void> future = clientChannel.connect(new InetSocketAddress(LOCALHOST,DEFAULT_PORT));
+            future.get();
 
+            BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
+            while (true){
+                String input = consoleReader.readLine();
+                byte[] inputByte = input.getBytes();
+                ByteBuffer buffer = ByteBuffer.wrap(inputByte);
+
+                Future<Integer> writeResult = clientChannel.write(buffer);
+                writeResult.get();
+                buffer.flip();
+                Future<Integer> readResult = clientChannel.read(buffer);
+
+                readResult.get();
+                String echo = new String(buffer.array());
+                buffer.clear();
+
+                System.out.println(echo);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

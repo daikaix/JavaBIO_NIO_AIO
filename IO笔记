@@ -330,10 +330,10 @@ AsyncSocketChannel    {connect/accept, read, write}      AsyncServerSocketChanne
     2. 通过CompletionHandler, 调用方法时传入该参数，本质是回调函数
 
 Echo模型：
-    AsynchronousChannelGroup 指定特定的ChannelGroup, 资源共享 [类似线程池] 系统到Group中找到可用的线程处理回调操作
-    AsynchronousServerSocketChannel ==> accept( attachment, AcceptHandler )
-        => AsynchronousSocketChannel ==> read ( buffer, info[attachment], handler)
-                                         write ( buffer, info[attachment], handler)
+AsynchronousChannelGroup 指定特定的ChannelGroup, 资源共享 [类似线程池] 系统到Group中找到可用的线程处理回调操作
+AsynchronousServerSocketChannel ==> accept( attachment, AcceptHandler )
+    => AsynchronousSocketChannel ==> read ( buffer, info[attachment], handler)
+                                     write ( buffer, info[attachment], handler)
 
 
 
@@ -343,4 +343,14 @@ Echo模型：
 
     ClientHandler [ implements CompletionHandler<Integer,Object> ]
         1. 获取AsynchronousSocketChannel
-        2. 根据attachment中的类型信息，进行对应的read和write操作
+        2. 首先获取attachment中的type和info，根据type：
+            read: 获取info中的buffer, 获取buffer中的数据，并调用clientChannel的write异步调用, 最后清空buffer
+            write: 获取空的buffer，重新获取数据
+
+Client:
+Future<Void> xx = AsynchronousSocketChannel => .connect()
+future.get() => 是一个阻塞的操作，保证了一定连接成功了
+获取String中的byte放进ByteBuffer之中
+获取用户输入 write，获取客户端输入 read
+
+    注意：Future可以自由控制获取时间但是操作麻烦，CompletionHandler通过回调函数保证了异步IO的性能！
