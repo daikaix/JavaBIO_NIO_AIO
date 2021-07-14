@@ -323,3 +323,24 @@ IO多路复用 => NIO+Selector  [ Selector.select() 返回可读条件，绑定�
         <—————————— 数据复制完毕
 
 === 7 ===
+AsyncSocketChannel    {connect/accept, read, write}      AsyncServerSocketChannel
+支持异步调用
+实现方式：
+    1. 通过Future, Channel 调用这些方法，返回Future对象，对Future对象进行操作
+    2. 通过CompletionHandler, 调用方法时传入该参数，本质是回调函数
+
+Echo模型：
+    AsynchronousChannelGroup 指定特定的ChannelGroup, 资源共享 [类似线程池] 系统到Group中找到可用的线程处理回调操作
+    AsynchronousServerSocketChannel ==> accept( attachment, AcceptHandler )
+        => AsynchronousSocketChannel ==> read ( buffer, info[attachment], handler)
+                                         write ( buffer, info[attachment], handler)
+
+
+
+    AcceptHandler [ implements CompletionHandler<AsynchronousSocketChannel,Object> ]
+        1. 回调serverChannel的accept事件 => clientChannel
+        2. 触发AsynchronousSocketChannel的读事件 ==> read(buffer, info , new ClientHandler())
+
+    ClientHandler [ implements CompletionHandler<Integer,Object> ]
+        1. 获取AsynchronousSocketChannel
+        2. 根据attachment中的类型信息，进行对应的read和write操作
