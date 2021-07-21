@@ -1,0 +1,100 @@
+==1. 基础原理==
+Socket与TCP,UDP:
+    1. IP地址与端口的结合协议
+    2. TCP/IP相关API的总称，APi的集合实现
+作用域组成：
+    1. 唯一标识两个端点之间的连接  IP+Port
+TCP:
+    1. 面向连接的通信协议，三次握手，四次挥手
+UDP:
+    1. 无连接， 数据包括目的端口号和源端口号信息
+
+==2. UDP==
+仅仅只是发送时带地址有效，收数据时无效
+DatagramSocket: 用于接收和发送UDP的类，负责发送和接收UDP包
+                不同于TCP,UDP没有合并到Socket API中
+    1. DatagramSocket(int port，InetAddress localAddr): 创建监听固定端口,指定IP的实例
+    2. receive(DatagramPacket d), send, setSoTimeout, close
+DatagramPacket: 处理报文，将byte数组，目标地址，目标端口数据包装成报文，或者拆为byte数组
+    1. (byte[] buf, int offset, int length, InetAddress, int port) 指定buffer使用区间
+    2. SocketAddress相当于InetAddress+Port
+    3. setData(byte[] buf,int offset,int length) 传入数据，setXXX
+
+
+UDP单播，多播，广播：
+单播：向指定的一个点发信息
+多播：向指定的多个点发信息（进行分组）
+广播：向所有的点发信息
+
+IP地址问题:
+       255.255.255.255为受限广播地址
+       C网：192.168.1.255
+       D网：多播预留
+IP:192.169.124.7  子网掩码：255.255.255.0   网络地址: 192.168.124.0
+广播地址：192.168.124.255（最后一个地址）
+
+IP:192.169.124.7子网：255.255.255.192（四个组）  ==》 广播地址：192.168.124.63（最后一个地址）
+IP:192.169.124.100子网：255.255.255.192（四个组）  ==》 广播地址：192.168.124.127（最后一个地址）
+
+
+==3. UDP实操==
+功能：局域网搜索
+    1. UDP接受消息并回送功能实现
+    2. 广播发送实现
+    3. 回送消息实现
+
+模型：
+    发送：DatagramPacket[byte【String.getByte()】,address,port] => DatagramSocket.send
+    接收：DatagramPacket[byte] => DatagramSocket(port).receive => getData
+
+    A ————> B,C,D 端口号，同一局域网
+广播实现：
+    1. Provider(B,C,D)  一个IP地址和端口号对应一个设备，while(!done)
+       首先DatagramSocket(20000).receive(DatagramPacket(buf))
+       将获取的信息打印，样板为：收到,请回电端口（Port):30000
+       然后回复消息：DatagramSocket().send(responseDataBytes) receivePack.getAddress()
+    2. Searcher(A) 进行局域网的设备搜索：
+       首先新建一个Listener线程，while(!done),countDown中await是阻塞，countdown是计数减一，等待线程创建完成
+       下面的操作是线程操作：
+           监听 DatagramSocket(30000).receive(DatagramPacket(buf))
+           将获取的信息打印，样板为：收到，我是SNxxx
+           将获取到的用户：放在device链表之中
+       sendBroadcast: DatagramSocket().send(responseDataBytes)  注意：Address为255.255.255.255
+
+==4. TCP实操== 参考BIO多人聊天
+ServerSocket => bind => socket = server.accept => socket.getInputStream,OutputStream
+                        Socket => read         => 同上 （BufferedReader,BufferedWriter)
+1. 创建一个Socket
+        // 无代理模式，等效于空构造函数
+        Socket socket = new Socket(Proxy.NO_PROXY);
+
+        // 新建一份具有HTTP代理的套接字，传输数据将通过www.baidu.com:8080端口转发
+        Proxy proxy = new Proxy(Proxy.Type.HTTP,
+                new InetSocketAddress(Inet4Address.getByName("www.baidu.com"), 8800));
+        socket = new Socket(proxy);
+
+        // 新建一个套接字，并且直接链接到本地20000的服务器上(自由分配绑定的端口)
+        socket = new Socket("localhost", PORT);
+
+        // 新建一个套接字，并且直接链接到本地20000的服务器上，并且绑定到本地20001端口上
+        socket = new Socket("localhost", PORT, Inet4Address.getLocalHost(), LOCAL_PORT);
+        socket = new Socket(Inet4Address.getLocalHost(), PORT, Inet4Address.getLocalHost(), LOCAL_PORT);
+2. 创建一个ServerSocket
+        // 绑定到本地端口20000上，并且设置当前可允许等待链接的队列为50个
+        //serverSocket = new ServerSocket(PORT);
+
+        // 等效于上面的方案，队列设置为50个
+        //serverSocket = new ServerSocket(PORT, 50);
+3. 设置Socket的参数，包括keepalive，Timeout等等
+4. 数据传输：
+    1. 直接包装成BufferedReader,BufferedWriter => readLine,write，flush即可
+    2. byte值的传输方式：不用String方式，int 4x8 => 4个byte数据  float => 4个byte数据 参考Tools
+
+        ByteBuffer使用： ByteBuffer.allocate(256),生成一个Byte数组
+        wrap(buffer) => 把buffer塞进去
+        putChar,putInt,put(0,1),putLong,putFloat,putDouble
+        getChat,getInt,....
+        String类型处理：put(str.getBytes())  => charset.decode,encode 如果编码不同的话！！！
+
+        outputStream.write(buffer, 0, byteBuffer.position() + 1);
+        int read = inputStream.read(buffer);
