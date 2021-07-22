@@ -98,3 +98,79 @@ ServerSocket => bind => socket = server.accept => socket.getInputStream,OutputSt
 
         outputStream.write(buffer, 0, byteBuffer.position() + 1);
         int read = inputStream.read(buffer);
+
+==5. UDP结合TCP实现搜索+点对点传输==
+UDP搜索：
+    1. 构建基础口令
+    2. 局域网广播口令消息（指定端口）
+    3. 接受端口回送消息（IP，PORT)
+UDP搜索取消：
+    1. 异步线程接收数据
+    2. 线程等待完成
+    3. 线程关闭
+实现：
+
+    服务器A       HEADER,1,30202,xxx <-------(30201)                 主机B
+                (30202) ----> HEADER,2,30401, SN
+    目的：返回可供连接的TCP端口号
+    过程：开启线程监听UDP.PORT_SERVER
+         receivePack接收数据，处理数据
+         获取cmd和responsePort,回送数据即TCP端口号
+
+    主机B:
+    目的: 搜索可供连接的服务器，并获取连接的TCP端口号
+    过程: 通过CountDownLatch(1)准备好接收返回的消息
+         sendBroadcast()
+         接收消息,将获取的device以及对应的TCP端口号作为一个info输出
+
+
+
+
+    基础包： constants 固定参数 => UDP:公共头部，广播端口30201，searcher接收数据端口30202
+                                TCP:30401
+    实现代码：
+        Server: Provider调用start函数，传递TCP.PORT_SERVER信息
+        ServerProvider:
+            PROVIDER_INSTANCE单例 => 内部类Provider,extends Thread线程
+            run(){
+            传入sn（随机生成），port(TCP_PORT)
+            sout(start!)
+            try{
+                ds = DatagramSocket(UDP.PORT_SERVER)
+                receivePack = DatagramPacket(buf,buf.length)
+                while(!done){
+                    ds.receive(receivePack);
+                    receivePack.getAddress().getHostAddress()
+                               .getPort(),.getLength()
+                    获取数据后判断数据是否有效 >8+2+4位
+                    sout
+
+                    解析命令： 获取HEADER长度
+                    获取cmd  => clientData[index++]<<8 | clientData[index++] & 0xff
+                    获取port
+                    if(cmd = 1, Port > 0){
+                        byteBuffer.put( HEADER, 2, TCP_PORT, sn)
+                        DatagramPacket(buffer,len,pack.getAddress(),getPort())
+                        ds.send()
+                    }
+                }
+            } catch
+            finally{
+            exit()
+            close()
+            }
+
+        Client:
+        ClientSearcher:
+
+        sendBroadcast():
+            ds = new DatagramSocket()
+            byteBuffer.put( HEADER, 1, UDP.PORT_CLIENT_RESPONSE, xx)
+            new DatagramPacket( byteBuffer.Array(), length )
+            setAddress( 255.255.255.255 ) setPort( 30201 )
+            ds.send(pack)
+
+        listen(）:
+            CountDownLatch(1);
+            listen.start()
+            await();
