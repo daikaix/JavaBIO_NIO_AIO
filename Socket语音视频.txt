@@ -119,9 +119,10 @@ UDP搜索取消：
 
     主机B:
     目的: 搜索可供连接的服务器，并获取连接的TCP端口号
-    过程: 通过CountDownLatch(1)准备好接收返回的消息
+    过程: 通过startCountDownLatch(1)准备好接收返回的消息
+         通过receiveCountDownLatch(1)确定数据已经接收
          sendBroadcast()
-         接收消息,将获取的device以及对应的TCP端口号作为一个info输出
+         接收消息,将获取的device以及对应的TCP端口号作为一个ServerInfoList输出
 
 
 
@@ -174,3 +175,16 @@ UDP搜索取消：
             CountDownLatch(1);
             listen.start()
             await();
+            run(){
+            countDownLatch.countDown();
+            try{
+                ds = new DatagramSocket(30202)
+                receivePack = new DatagramPacket(buf,length)
+                while(!done){
+                    ds.receive(receivePack);
+                    ds.getPort,IP => 判断isVaild,cmd==2,Port>0
+                    ServerInfoList.add(ServerInfo(serverPort,ip,sn))
+                }
+            }
+        getServerAndClose():
+            return serverInfoList;
