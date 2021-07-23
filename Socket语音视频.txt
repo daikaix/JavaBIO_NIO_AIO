@@ -188,3 +188,10 @@ UDP搜索取消：
             }
         getServerAndClose():
             return serverInfoList;
+
+TCP连接以及数据传输：
+        服务器A ServerSocket(Listener)30401
+        Socket      <----      accept     <-----    Socket(30401)
+        BufferedReader readline()
+        BufferedWriter write()
+        PrintStream println(str.length)
