@@ -190,8 +190,32 @@ UDP搜索取消：
             return serverInfoList;
 
 TCP连接以及数据传输：
-        服务器A ServerSocket(Listener)30401
-        Socket      <----      accept     <-----    Socket(30401)
-        BufferedReader readline()
-        BufferedWriter write()
-        PrintStream println(str.length)
+    服务器A ServerSocket(Listener)30401
+    Socket      <----      accept     <-----    Socket(30401) info.getAddress, info.getPort
+    BufferedReader readline()
+    BufferedWriter write()
+    PrintStream println(str.length)
+
+TCP连接更新，多线程：
+    服务器A Server                                             主机B Client
+    UDPProvider     HEADER,1,30202,xxx <-------(30201)        UDPSearcher
+                    (30202) ----> HEADER,2,30401, SN
+
+    BufferedReader(System.in).readLine()
+    读取键盘输入，如果为00bye00,就stop()
+
+    TCPServer(30401)                                          TCPClient.linkWith(info)
+        => List<ClientHandler> clientHandlerList
+        => broadcast()
+
+    ClientListener(Thread)                <---------------    socket.connect(info.getAddress,info.getPort)
+        => client = ServerSocket.accept()
+        => 根据client创建ClientHandler
+    ClientHandler(主机对应的Socket)
+        => ReadHandler(Thread) readLine,print   <---------    write(Socket client)
+        => WriteHandler(newSingleThreadExecutor)
+           executorService.execute()
+           new WriteRunnable(str)               --------->    ReadHandler()
+        => CloseNotify -> exitBySelf()
+
+注意，工具类CloseUtil的Close方法
